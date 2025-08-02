@@ -187,7 +187,7 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
           <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-xs font-bold text-primary-foreground">
             {level + 1}
           </div>
-          <span className="font-medium capitalize">{chain.species.name}</span>
+          <span className="font-medium capitalize text-foreground">{chain.species.name}</span>
         </div>
         
         {chain.evolves_to && chain.evolves_to.length > 0 && (
@@ -195,7 +195,7 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
             {chain.evolves_to.map((evolution: any, index: number) => (
               <div key={index} className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-secondary rounded-full flex items-center justify-center text-xs">
+                  <div className="w-6 h-6 bg-muted rounded-full flex items-center justify-center text-xs text-muted-foreground">
                     →
                   </div>
                   <span className="text-sm text-muted-foreground">
@@ -293,41 +293,41 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
         </div>
 
         {/* Bottom Section with Tabs */}
-        <div className="bg-white rounded-t-3xl -mt-8 relative z-20 min-h-[400px]">
+        <div className="bg-background rounded-t-3xl -mt-8 relative z-20 min-h-[400px]">
           <Tabs defaultValue="about" className="w-full">
             <TabsList className="grid w-full grid-cols-4 rounded-none border-b bg-transparent">
-              <TabsTrigger value="about" className="rounded-none border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:text-gray-800 data-[state=inactive]:text-gray-500">About</TabsTrigger>
-              <TabsTrigger value="stats" className="rounded-none border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:text-gray-800 data-[state=inactive]:text-gray-500">Base Stats</TabsTrigger>
-              <TabsTrigger value="evolution" className="rounded-none border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:text-gray-800 data-[state=inactive]:text-gray-500">Evolution</TabsTrigger>
-              <TabsTrigger value="moves" className="rounded-none border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:text-gray-800 data-[state=inactive]:text-gray-500">Moves</TabsTrigger>
+              <TabsTrigger value="about" className="rounded-none border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground">About</TabsTrigger>
+              <TabsTrigger value="stats" className="rounded-none border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground">Base Stats</TabsTrigger>
+              <TabsTrigger value="evolution" className="rounded-none border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground">Evolution</TabsTrigger>
+              <TabsTrigger value="moves" className="rounded-none border-b-2 border-transparent data-[state=active]:border-purple-600 data-[state=active]:text-foreground data-[state=inactive]:text-muted-foreground">Moves</TabsTrigger>
             </TabsList>
 
                       <TabsContent value="about" className="space-y-4 p-6">
               {/* Physical Characteristics */}
               <div>
-                <h3 className="text-lg font-semibold mb-4 text-gray-800">Physical Characteristics</h3>
+                <h3 className="text-lg font-semibold mb-4 text-foreground">Physical Characteristics</h3>
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-sm text-gray-500">Species</span>
-                    <span className="font-medium text-gray-800 capitalize">
+                  <div className="flex justify-between items-center py-2 border-b border-border">
+                    <span className="text-sm text-muted-foreground">Species</span>
+                    <span className="font-medium text-foreground capitalize">
                       {speciesData?.genus || 'Unknown'}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-sm text-gray-500">Height</span>
-                    <span className="font-medium text-gray-800">
+                  <div className="flex justify-between items-center py-2 border-b border-border">
+                    <span className="text-sm text-muted-foreground">Height</span>
+                    <span className="font-medium text-foreground">
                       {pokemon.height / 10}m
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-sm text-gray-500">Weight</span>
-                    <span className="font-medium text-gray-800">
+                  <div className="flex justify-between items-center py-2 border-b border-border">
+                    <span className="text-sm text-muted-foreground">Weight</span>
+                    <span className="font-medium text-foreground">
                       {pokemon.weight / 10}kg
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span className="text-sm text-gray-500">Abilities</span>
-                    <span className="font-medium text-gray-800 capitalize">
+                  <div className="flex justify-between items-center py-2 border-b border-border">
+                    <span className="text-sm text-muted-foreground">Abilities</span>
+                    <span className="font-medium text-foreground capitalize">
                       {pokemon.abilities.join(', ')}
                     </span>
                   </div>
@@ -341,37 +341,37 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
                 </div>
               ) : speciesData ? (
                 <div>
-                  <h3 className="text-lg font-semibold mb-4 text-gray-800">Species Information</h3>
+                  <h3 className="text-lg font-semibold mb-4 text-foreground">Species Information</h3>
                   <div className="space-y-3">
-                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                      <span className="text-sm text-gray-500">Generation</span>
-                      <span className="font-medium text-gray-800 capitalize">
+                    <div className="flex justify-between items-center py-2 border-b border-border">
+                      <span className="text-sm text-muted-foreground">Generation</span>
+                      <span className="font-medium text-foreground capitalize">
                         {speciesData.generation.name.replace('-', ' ')}
                       </span>
                     </div>
                     {speciesData.habitat && (
-                      <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                        <span className="text-sm text-gray-500">Habitat</span>
-                        <span className="font-medium text-gray-800 capitalize">
+                      <div className="flex justify-between items-center py-2 border-b border-border">
+                        <span className="text-sm text-muted-foreground">Habitat</span>
+                        <span className="font-medium text-foreground capitalize">
                           {speciesData.habitat.name.replace('-', ' ')}
                         </span>
                       </div>
                     )}
-                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                      <span className="text-sm text-gray-500">Growth Rate</span>
-                      <span className="font-medium text-gray-800 capitalize">
+                    <div className="flex justify-between items-center py-2 border-b border-border">
+                      <span className="text-sm text-muted-foreground">Growth Rate</span>
+                      <span className="font-medium text-foreground capitalize">
                         {speciesData.growth_rate.name.replace('-', ' ')}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                      <span className="text-sm text-gray-500">Capture Rate</span>
-                      <span className="font-medium text-gray-800">
+                    <div className="flex justify-between items-center py-2 border-b border-border">
+                      <span className="text-sm text-muted-foreground">Capture Rate</span>
+                      <span className="font-medium text-foreground">
                         {speciesData.capture_rate}
                       </span>
                     </div>
-                    <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                      <span className="text-sm text-gray-500">Base Happiness</span>
-                      <span className="font-medium text-gray-800">
+                    <div className="flex justify-between items-center py-2 border-b border-border">
+                      <span className="text-sm text-muted-foreground">Base Happiness</span>
+                      <span className="font-medium text-foreground">
                         {speciesData.base_happiness}
                       </span>
                     </div>
@@ -381,19 +381,19 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
             </TabsContent>
 
           <TabsContent value="stats" className="space-y-4 p-6">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">Base Stats</h3>
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Base Stats</h3>
             <div className="space-y-3">
               {pokemon.stats.map((stat: PokemonStat) => (
                 <div key={stat.name}>
                   <div className="flex justify-between text-sm mb-2">
-                    <span className="capitalize text-gray-500">
+                    <span className="capitalize text-muted-foreground">
                       {stat.name.replace('-', ' ')}
                     </span>
-                    <span className="font-medium text-gray-800">
+                    <span className="font-medium text-foreground">
                       {stat.value}
                     </span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
+                  <div className="w-full bg-muted rounded-full h-3">
                     <div
                       className="bg-gradient-to-r from-purple-500 to-purple-600 h-3 rounded-full transition-all duration-300"
                       style={{
@@ -407,7 +407,7 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
           </TabsContent>
 
           <TabsContent value="evolution" className="space-y-4 p-6">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">Evolution Chain</h3>
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Evolution Chain</h3>
             {loadingEvolution ? (
               <div className="flex justify-center py-8">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
@@ -418,7 +418,7 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
               </div>
             ) : (
               <div className="text-center py-8">
-                <div className="text-gray-500">
+                <div className="text-muted-foreground">
                   <p className="text-lg mb-2">No evolution data available</p>
                   <p className="text-sm">This Pokemon doesn't have an evolution chain.</p>
                 </div>
@@ -427,7 +427,7 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
           </TabsContent>
 
           <TabsContent value="moves" className="space-y-4 p-6">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">Moves</h3>
+            <h3 className="text-lg font-semibold mb-4 text-foreground">Moves</h3>
             {loadingMoves ? (
               <div className="flex justify-center py-8">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
@@ -448,12 +448,12 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
                   .map((move, index) => {
                     const levelUpDetail = move.version_group_details.find(d => d.move_learn_method.name === 'level-up');
                     return (
-                      <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg border border-gray-100">
-                        <span className="font-medium capitalize text-gray-800">
+                      <div key={index} className="flex justify-between items-center p-3 bg-muted/50 rounded-lg border border-border">
+                        <span className="font-medium capitalize text-foreground">
                           {move.move.name.replace('-', ' ')}
                         </span>
                         {levelUpDetail && (
-                          <Badge variant="outline" className="text-xs bg-purple-100 text-purple-700 border-purple-200">
+                          <Badge variant="outline" className="text-xs bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-700">
                             Level {levelUpDetail.level_learned_at}
                           </Badge>
                         )}
@@ -463,7 +463,7 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
               </div>
             ) : (
               <div className="text-center py-8">
-                <div className="text-gray-500">
+                <div className="text-muted-foreground">
                   <p className="text-lg mb-2">No moves data available</p>
                   <p className="text-sm">This Pokemon doesn't have any moves.</p>
                 </div>
