@@ -15,6 +15,12 @@ interface PokemonDetailProps {
 interface PokemonSpecies {
   name: string;
   genus: string;
+  genera: Array<{
+    genus: string;
+    language: {
+      name: string;
+    };
+  }>;
   flavor_text_entries: Array<{
     flavor_text: string;
     language: {
@@ -329,7 +335,7 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
                   <div className="flex justify-between items-center py-2 border-b border-border">
                     <span className="text-sm text-muted-foreground">Species</span>
                     <span className="font-medium text-foreground capitalize">
-                      {speciesData?.genus || 'Unknown'}
+                      {speciesData?.genera?.[7].genus || 'Unknown'}
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-border">
