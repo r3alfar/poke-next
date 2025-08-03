@@ -5,9 +5,34 @@ import { Pokemon } from '../types/pokemon';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Search, Sparkles, Zap, Flame, Droplets, Leaf, Shield } from 'lucide-react';
+import Image from 'next/image';
 
 interface PokemonListProps {
   onPokemonSelect: (pokemon: Pokemon) => void;
+}
+
+interface PokeApiResult {
+  name: string;
+  url: string;
+}
+
+interface PokeApiType {
+  type: {
+    name: string;
+  };
+}
+
+interface PokeApiAbility {
+  ability: {
+    name: string;
+  };
+}
+
+interface PokeApiStat {
+  stat: {
+    name: string;
+  };
+  base_stat: number;
 }
 
 export default function PokemonList({ onPokemonSelect }: PokemonListProps) {
@@ -25,18 +50,18 @@ export default function PokemonList({ onPokemonSelect }: PokemonListProps) {
         
         // Fetch detailed data for each Pokemon
         const detailedPokemon = await Promise.all(
-          data.results.map(async (pokemon: any) => {
+          data.results.map(async (pokemon: PokeApiResult) => {
             const detailResponse = await fetch(pokemon.url);
             const detailData = await detailResponse.json();
             return {
               id: detailData.id,
               name: detailData.name,
               image: detailData.sprites.front_default,
-              types: detailData.types.map((type: any) => type.type.name),
+              types: detailData.types.map((type: PokeApiType) => type.type.name),
               height: detailData.height,
               weight: detailData.weight,
-              abilities: detailData.abilities.map((ability: any) => ability.ability.name),
-              stats: detailData.stats.map((stat: any) => ({
+              abilities: detailData.abilities.map((ability: PokeApiAbility) => ability.ability.name),
+              stats: detailData.stats.map((stat: PokeApiStat) => ({
                 name: stat.stat.name,
                 value: stat.base_stat
               }))
@@ -224,13 +249,15 @@ export default function PokemonList({ onPokemonSelect }: PokemonListProps) {
                 {/* Pokemon Image with Glow Effect */}
                 <div className="relative mb-4">
                   <div className={`absolute inset-0 bg-gradient-to-r ${typeGlow} rounded-full blur-xl group-hover:blur-2xl transition-all duration-300`} />
-                  <div className="relative bg-gradient-to-br from-background/90 to-background/70 rounded-full p-4 w-32 h-32 mx-auto flex items-center justify-center backdrop-blur-sm">
-                    <img
-                      src={pokemon.image}
-                      alt={pokemon.name}
-                      className="w-24 h-24 object-contain drop-shadow-lg group-hover:scale-110 transition-transform duration-300"
-                    />
-                  </div>
+                                     <div className="relative bg-gradient-to-br from-background/90 to-background/70 rounded-full p-4 w-32 h-32 mx-auto flex items-center justify-center backdrop-blur-sm">
+                     <Image
+                       src={pokemon.image}
+                       alt={pokemon.name}
+                       width={96}
+                       height={96}
+                       className="object-contain drop-shadow-lg group-hover:scale-110 transition-transform duration-300"
+                     />
+                   </div>
                 </div>
 
                 {/* Pokemon Info */}

@@ -1,12 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Pokemon, PokemonStat } from '../types/pokemon';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
+import Image from 'next/image';
 
 interface PokemonDetailProps {
   pokemon: Pokemon | null;
@@ -42,33 +41,20 @@ interface PokemonSpecies {
 }
 
 interface EvolutionChain {
-  chain: {
-    species: {
+  chain: EvolutionChainLink;
+}
+
+interface EvolutionChainLink {
+  species: {
+    name: string;
+  };
+  evolves_to: EvolutionChainLink[];
+  evolution_details?: Array<{
+    min_level?: number;
+    trigger: {
       name: string;
     };
-    evolves_to: Array<{
-      species: {
-        name: string;
-      };
-      evolution_details: Array<{
-        min_level: number;
-        trigger: {
-          name: string;
-        };
-      }>;
-      evolves_to: Array<{
-        species: {
-          name: string;
-        };
-        evolution_details: Array<{
-          min_level: number;
-          trigger: {
-            name: string;
-          };
-        }>;
-      }>;
-    }>;
-  };
+  }>;
 }
 
 interface PokemonMove {
@@ -90,70 +76,98 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
   const [loadingSpecies, setLoadingSpecies] = useState(false);
   const [loadingEvolution, setLoadingEvolution] = useState(false);
   const [loadingMoves, setLoadingMoves] = useState(false);
-  
-  if (!pokemon) return null;
 
+  // Define all the data fetching functions first using useCallback
+  const fetchSpeciesData = useCallback(async () => {
+    if (!pokemon) return;
+
+    try {
+      setLoadingSpecies(true);
+      const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.id}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setSpeciesData(data);
+    } catch (error: unknown) {
+      // Handle error state
+      setSpeciesData(null);
+      // In a production app, you might want to show a toast notification here
+      // or use a proper error boundary
+      if (error instanceof Error) {
+        console.error('Error fetching species data:', error.message);
+      }
+    } finally {
+      setLoadingSpecies(false);
+    }
+  }, [pokemon]);
+
+  const fetchEvolutionData = useCallback(async () => {
+    if (!pokemon) return;
+
+    try {
+      setLoadingEvolution(true);
+      const speciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.id}`);
+      if (!speciesResponse.ok) {
+        throw new Error(`HTTP error! status: ${speciesResponse.status}`);
+      }
+      const speciesData = await speciesResponse.json();
+
+      if (speciesData.evolution_chain?.url) {
+        const evolutionResponse = await fetch(speciesData.evolution_chain.url);
+        if (!evolutionResponse.ok) {
+          throw new Error(`HTTP error! status: ${evolutionResponse.status}`);
+        }
+        const evolutionData = await evolutionResponse.json();
+        setEvolutionData(evolutionData);
+      }
+    } catch (error: unknown) {
+      // Handle error state
+      setEvolutionData(null);
+      // In a production app, you might want to show a toast notification here
+      // or use a proper error boundary
+      if (error instanceof Error) {
+        console.error('Error fetching evolution data:', error.message);
+      }
+    } finally {
+      setLoadingEvolution(false);
+    }
+  }, [pokemon]);
+
+  const fetchMovesData = useCallback(async () => {
+    if (!pokemon) return;
+
+    try {
+      setLoadingMoves(true);
+      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.id}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setMovesData(data.moves || []);
+    } catch (error: unknown) {
+      // Handle error state
+      setMovesData([]);
+      // In a production app, you might want to show a toast notification here
+      // or use a proper error boundary
+      if (error instanceof Error) {
+        console.error('Error fetching moves data:', error.message);
+      }
+    } finally {
+      setLoadingMoves(false);
+    }
+  }, [pokemon]);
+
+  // Add the useEffect hook after all the functions it depends on are defined
   useEffect(() => {
     if (pokemon) {
       fetchSpeciesData();
       fetchEvolutionData();
       fetchMovesData();
     }
-  }, [pokemon]);
+  }, [pokemon, fetchSpeciesData, fetchEvolutionData, fetchMovesData]);
 
-  const fetchSpeciesData = async () => {
-    if (!pokemon) return;
-    
-    try {
-      setLoadingSpecies(true);
-      const response = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.id}`);
-      const data = await response.json();
-      
-      setSpeciesData(data);
-    } catch (error) {
-      console.error('Error fetching species data:', error);
-    } finally {
-      setLoadingSpecies(false);
-    }
-  };
-
-  const fetchEvolutionData = async () => {
-    if (!pokemon) return;
-    
-    try {
-      setLoadingEvolution(true);
-      // First get the species data to get the evolution chain URL
-      const speciesResponse = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon.id}`);
-      const speciesData = await speciesResponse.json();
-      
-      if (speciesData.evolution_chain?.url) {
-        const evolutionResponse = await fetch(speciesData.evolution_chain.url);
-        const evolutionData = await evolutionResponse.json();
-        setEvolutionData(evolutionData);
-      }
-    } catch (error) {
-      console.error('Error fetching evolution data:', error);
-    } finally {
-      setLoadingEvolution(false);
-    }
-  };
-
-  const fetchMovesData = async () => {
-    if (!pokemon) return;
-    
-    try {
-      setLoadingMoves(true);
-      // Get detailed Pokemon data which includes moves
-      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.id}`);
-      const data = await response.json();
-      
-      setMovesData(data.moves || []);
-    } catch (error) {
-      console.error('Error fetching moves data:', error);
-    } finally {
-      setLoadingMoves(false);
-    }
-  };
+  if (!pokemon) return null;
 
   const getTypeBackground = (type: string) => {
     switch (type) {
@@ -178,7 +192,7 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
     }
   };
 
-  const renderEvolutionChain = (chain: any, level: number = 0) => {
+  const renderEvolutionChain = (chain: EvolutionChainLink | null, level: number = 0) => {
     if (!chain) return null;
 
     return (
@@ -189,18 +203,18 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
           </div>
           <span className="font-medium capitalize text-foreground">{chain.species.name}</span>
         </div>
-        
+
         {chain.evolves_to && chain.evolves_to.length > 0 && (
           <div className="ml-4 space-y-2">
-            {chain.evolves_to.map((evolution: any, index: number) => (
+            {chain.evolves_to.map((evolution, index) => (
               <div key={index} className="space-y-2">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 bg-muted rounded-full flex items-center justify-center text-xs text-muted-foreground">
-                    →
+                    &rarr; {/* HTML entity escaping */}
                   </div>
                   <span className="text-sm text-muted-foreground">
-                    {evolution.evolution_details[0]?.trigger.name.replace('-', ' ')} 
-                    {evolution.evolution_details[0]?.min_level && ` (Level ${evolution.evolution_details[0].min_level})`}
+                    {evolution.evolution_details?.[0]?.trigger.name.replace('-', ' ')} 
+                    {evolution.evolution_details?.[0]?.min_level && ` (Level ${evolution.evolution_details?.[0].min_level})`}
                   </span>
                 </div>
                 {renderEvolutionChain(evolution, level + 1)}
@@ -212,8 +226,10 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
     );
   };
 
+  if (!pokemon) return null;
+
   return (
-    <Dialog open={!!pokemon} onOpenChange={() => onClose()}>
+    <Dialog open={!!pokemon} onOpenChange={onClose}>
       <DialogContent className="max-w-md p-0 overflow-hidden">
         <DialogHeader className="sr-only">
           <DialogTitle>Pokemon Details</DialogTitle>
@@ -227,13 +243,13 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
             <div className="absolute bottom-6 left-6 w-1.5 h-1.5 bg-white rounded-full"></div>
             <div className="absolute top-8 right-8 w-1 h-1 bg-white rounded-full"></div>
           </div>
-          
+
           {/* Pokemon Name and ID */}
           <div className="relative z-10 flex justify-between items-start text-white">
             <h2 className="text-3xl font-bold capitalize">{pokemon.name}</h2>
-            <p className="text-lg opacity-90">#{pokemon.id.toString().padStart(3, '0')}</p>
+            <p className="text-lg opacity-90">#{pokemon.id.toString().padStart(4, '0')}</p>
           </div>
-          
+
           {/* Types */}
           <div className="relative z-10 flex gap-2 mt-3">
             {pokemon.types.map((type: string) => (
@@ -281,13 +297,16 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
               </Badge>
             ))}
           </div>
-          
+
           {/* Pokemon Image - Centered and overlapping */}
           <div className="relative z-10 flex justify-center mt-4">
-            <img
+            <Image
               src={pokemon.image}
               alt={pokemon.name}
-              className="w-40 h-40 object-contain drop-shadow-lg"
+              width={160}
+              height={160}
+              className="object-contain drop-shadow-lg"
+              priority
             />
           </div>
         </div>
@@ -420,7 +439,7 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
               <div className="text-center py-8">
                 <div className="text-muted-foreground">
                   <p className="text-lg mb-2">No evolution data available</p>
-                  <p className="text-sm">This Pokemon doesn't have an evolution chain.</p>
+                  <p className="text-sm">This Pokemon doesn&apos;t have an evolution chain.</p>
                 </div>
               </div>
             )}
@@ -465,7 +484,7 @@ export default function PokemonDetail({ pokemon, onClose }: PokemonDetailProps) 
               <div className="text-center py-8">
                 <div className="text-muted-foreground">
                   <p className="text-lg mb-2">No moves data available</p>
-                  <p className="text-sm">This Pokemon doesn't have any moves.</p>
+                  <p className="text-sm">This Pokemon doesn&apos;t have any moves.</p>
                 </div>
               </div>
             )}
