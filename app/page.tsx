@@ -4,9 +4,7 @@ import { useState } from 'react';
 import PokemonList from './components/PokemonList';
 import PokemonDetail from './components/PokemonDetail';
 import { Pokemon } from './types/pokemon';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ThemeToggle } from './components/theme-toggle';
 
 export default function Home() {
@@ -27,7 +25,7 @@ export default function Home() {
           <Card className="flex-1 bg-transparent border-0 shadow-none">
             <CardHeader className="text-center">
               <CardTitle className="text-4xl font-bold">
-                Pokemon Explorer
+                Pokemon Dex
               </CardTitle>
               <CardDescription className="text-lg">
                 Click on a Pokemon to see its details
